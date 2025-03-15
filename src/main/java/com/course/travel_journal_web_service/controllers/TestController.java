@@ -20,7 +20,7 @@ public class TestController {
         return ResponseEntity.ok("Страница для пользователя с ролью: ЮЗЕР");
     }
 
-    @GetMapping("/amins")
+    @GetMapping("/admins")
     @PreAuthorize("hasAuthority(('ROLE_ADMIN'))")
     public ResponseEntity<?> pageForAdmins(){
         return ResponseEntity.ok("Страница для пользователя с ролью: АДМИН");

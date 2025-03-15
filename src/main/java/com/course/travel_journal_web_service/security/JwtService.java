@@ -113,8 +113,8 @@ public class JwtService {
      * @return данные
      */
     private Claims extractAllClaims(String token) {
-        return Jwts.parser().setSigningKey(getSigningKey())
-                .parseClaimsJws(token)
+        return Jwts.parser().setSigningKey(getSigningKey()).build()
+                .parseSignedClaims(token)
                 .getBody();
     }
 
