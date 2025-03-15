@@ -16,8 +16,18 @@ public class TestController {
 
     @GetMapping("/users")
     @PreAuthorize("hasAuthority(('ROLE_USER'))")
-    public ResponseEntity<?> users(){
-        return ResponseEntity.ok("Незащищенная страница для всех");
+    public ResponseEntity<?> pageForUsers(){
+        return ResponseEntity.ok("Страница для пользователя с ролью: ЮЗЕР");
     }
 
+    @GetMapping("/amins")
+    @PreAuthorize("hasAuthority(('ROLE_ADMIN'))")
+    public ResponseEntity<?> pageForAdmins(){
+        return ResponseEntity.ok("Страница для пользователя с ролью: АДМИН");
+    }
+
+    @GetMapping(path = "/all")
+    public ResponseEntity<?> pageForAll(){
+        return ResponseEntity.ok("Страница для всех пользователей");
+    }
 }
