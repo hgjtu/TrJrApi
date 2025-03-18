@@ -35,7 +35,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         // Получаем токен из заголовка
         var authHeader = request.getHeader(HEADER_NAME);
-        if (StringUtils.isEmpty(authHeader) || !authHeader.startsWith(BEARER_PREFIX)) {
+        if (StringUtils.isEmpty(authHeader) || //substring: because front always transmits with a parameter 'Baerer null' blyat`
+                authHeader.substring(BEARER_PREFIX.length()).equals("undefined") ||
+                !authHeader.startsWith(BEARER_PREFIX)) {
             filterChain.doFilter(request, response);
             return;
         }
