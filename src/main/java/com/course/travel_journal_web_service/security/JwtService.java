@@ -21,6 +21,12 @@ public class JwtService {
     @Value("${token.signing.key}")
     private String jwtSigningKey;
 
+    @Value("${jwt.accessToken.expiration}")
+    private long accessTokenExpiration;
+
+    @Value("${jwt.refreshToken.expiration}")
+    private long refreshTokenExpiration;
+
     /**
      * Извлечение имени пользователя из токена
      *
@@ -44,8 +50,25 @@ public class JwtService {
             claims.put("email", customUserDetails.getEmail());
             claims.put("role", customUserDetails.getRole());
         }
-        return generateToken(claims, userDetails);
+        return generateToken(claims, userDetails, accessTokenExpiration);
     }
+
+    /**
+     * Генерация refresh токена
+     *
+     * @param userDetails данные пользователя
+     * @return токен
+     */
+    public String generateRefreshToken(UserDetails userDetails) {
+        Map<String, Object> claims = new HashMap<>();
+        if (userDetails instanceof User customUserDetails) {
+            claims.put("id", customUserDetails.getId());
+            claims.put("email", customUserDetails.getEmail());
+            claims.put("role", customUserDetails.getRole());
+        }
+        return generateToken(claims, userDetails, refreshTokenExpiration);
+    }
+
 
     /**
      * Проверка токена на валидность
@@ -79,10 +102,10 @@ public class JwtService {
      * @param userDetails данные пользователя
      * @return токен
      */
-    private String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
+    private String generateToken(Map<String, Object> extraClaims, UserDetails userDetails, long expiration) {
         return Jwts.builder().setClaims(extraClaims).setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 100000 * 60 * 24))
+                .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(SignatureAlgorithm.HS256, getSigningKey()).compact();
     }
 
