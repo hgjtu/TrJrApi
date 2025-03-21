@@ -1,12 +1,11 @@
-package com.course.travel_journal_web_service.security;
-
+package com.course.travel_journal_web_service.dto;
 
 import com.course.travel_journal_web_service.models.UserForResponse;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 
-@Data
+@AllArgsConstructor
 @Builder
 @Schema(description = "Ответ c токеном доступа")
 public class JwtAuthenticationResponse {

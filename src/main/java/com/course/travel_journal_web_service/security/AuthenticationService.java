@@ -1,5 +1,6 @@
 package com.course.travel_journal_web_service.security;
 
+import com.course.travel_journal_web_service.dto.JwtAuthenticationResponse;
 import com.course.travel_journal_web_service.dto.SignInRequest;
 import com.course.travel_journal_web_service.dto.SignUpRequest;
 import com.course.travel_journal_web_service.models.Role;
@@ -11,9 +12,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.io.Console;
-import java.lang.reflect.InvocationTargetException;
 
 @Service
 @RequiredArgsConstructor

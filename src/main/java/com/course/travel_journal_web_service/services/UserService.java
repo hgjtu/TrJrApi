@@ -1,7 +1,9 @@
 package com.course.travel_journal_web_service.services;
 
+import com.course.travel_journal_web_service.dto.UserResponse;
 import com.course.travel_journal_web_service.models.Role;
 import com.course.travel_journal_web_service.models.User;
+import com.course.travel_journal_web_service.models.UserForResponse;
 import com.course.travel_journal_web_service.repos.UserRepos;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -74,6 +76,21 @@ public class UserService {
         var username = SecurityContextHolder.getContext().getAuthentication().getName();
         return getByUsername(username);
     }
+
+    /**
+     * Получение данных пользователя для отдачи
+     *
+     * @return данные о текущем пользователе
+     */
+        public UserResponse getUserData() {
+            // Получение пользователя
+            User user = getCurrentUser();
+
+            return UserResponse.builder()
+                    .username(user.getUsername())
+                    .email(user.getEmail())
+                    .build();
+        }
 
 
     /**
