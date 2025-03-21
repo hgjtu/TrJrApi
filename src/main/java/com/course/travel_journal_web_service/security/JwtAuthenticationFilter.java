@@ -37,6 +37,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         var authHeader = request.getHeader(HEADER_NAME);
         if (StringUtils.isEmpty(authHeader) || //substring: because front always transmits with a parameter 'Baerer null' blyat`
                 authHeader.substring(BEARER_PREFIX.length()).equals("undefined") ||
+                authHeader.substring(BEARER_PREFIX.length()).equals("null") ||
                 !authHeader.startsWith(BEARER_PREFIX)) {
             filterChain.doFilter(request, response);
             return;

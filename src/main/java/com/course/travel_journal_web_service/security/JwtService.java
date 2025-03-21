@@ -24,9 +24,6 @@ public class JwtService {
     @Value("${jwt.accessToken.expiration}")
     private long accessTokenExpiration;
 
-    @Value("${jwt.refreshToken.expiration}")
-    private long refreshTokenExpiration;
-
     /**
      * Извлечение имени пользователя из токена
      *
@@ -51,22 +48,6 @@ public class JwtService {
             claims.put("role", customUserDetails.getRole());
         }
         return generateToken(claims, userDetails, accessTokenExpiration);
-    }
-
-    /**
-     * Генерация refresh токена
-     *
-     * @param userDetails данные пользователя
-     * @return токен
-     */
-    public String generateRefreshToken(UserDetails userDetails) {
-        Map<String, Object> claims = new HashMap<>();
-        if (userDetails instanceof User customUserDetails) {
-            claims.put("id", customUserDetails.getId());
-            claims.put("email", customUserDetails.getEmail());
-            claims.put("role", customUserDetails.getRole());
-        }
-        return generateToken(claims, userDetails, refreshTokenExpiration);
     }
 
 

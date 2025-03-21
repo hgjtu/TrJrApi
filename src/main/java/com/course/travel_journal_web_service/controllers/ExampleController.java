@@ -24,7 +24,7 @@ public class ExampleController {
 
     @GetMapping("/admin")
     @Operation(summary = "Доступен только авторизованным пользователям с ролью ADMIN")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String exampleAdmin() {
         return "Hello, admin!";
     }

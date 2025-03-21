@@ -4,13 +4,16 @@ import com.course.travel_journal_web_service.dto.SignInRequest;
 import com.course.travel_journal_web_service.dto.SignUpRequest;
 import com.course.travel_journal_web_service.models.Role;
 import com.course.travel_journal_web_service.models.User;
+import com.course.travel_journal_web_service.models.UserForResponse;
 import com.course.travel_journal_web_service.services.UserService;
 import lombok.RequiredArgsConstructor;
-import org.apache.catalina.connector.Request;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.io.Console;
+import java.lang.reflect.InvocationTargetException;
 
 @Service
 @RequiredArgsConstructor
@@ -19,7 +22,6 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
-    public static final String HEADER_NAME = "RefreshToken";
 
     /**
      * Регистрация пользователя
@@ -39,8 +41,12 @@ public class AuthenticationService {
         userService.create(user);
 
         var jwt = jwtService.generateToken(user);
-        var refreshJwt = jwtService.generateRefreshToken(user);
-        return new JwtAuthenticationResponse(jwt, refreshJwt);
+        var userForResponse = UserForResponse.builder()
+                .username(request.getUsername())
+                .role(Role.ROLE_USER)
+                .build();
+
+        return new JwtAuthenticationResponse(jwt, userForResponse);
     }
 
     /**
@@ -60,23 +66,13 @@ public class AuthenticationService {
                 .loadUserByUsername(request.getUsername());
 
         var jwt = jwtService.generateToken(user);
-        var refreshJwt = jwtService.generateRefreshToken(user);
-        return new JwtAuthenticationResponse(jwt, refreshJwt);
-    }
+        var userForResponse = UserForResponse.builder()
+                .username(request.getUsername())
+                .role(userService
+                        .getByUsername(request.getUsername())
+                        .getRole())
+                .build();
 
-//    public JwtAuthenticationResponse refresh(Request request) {
-//        String refreshToken = request.getHeader(HEADER_NAME);
-//        String username = jwtService.extractUserName(refreshToken);
-//
-//        if (jwtService.isTokenValid(request.getRefreshToken(), username)) {
-//            String accessToken = jwtTokenUtil.generateAccessToken(username);
-//            return ResponseEntity.ok(new JwtResponse(accessToken, refreshTokenRequest.getRefreshToken()));
-//        }
-//
-//        return ResponseEntity.badRequest().body("Invalid refresh token");
-//
-//        var jwt = jwtService.generateToken(user);
-//        var refreshJwt = jwtService.generateRefreshToken(user);
-//        return new JwtAuthenticationResponse(jwt, refreshJwt);
-//    }
+        return new JwtAuthenticationResponse(jwt, userForResponse);
+    }
 }
