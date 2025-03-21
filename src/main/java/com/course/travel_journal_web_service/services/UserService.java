@@ -1,9 +1,9 @@
 package com.course.travel_journal_web_service.services;
 
+import com.course.travel_journal_web_service.dto.UserEditRequest;
 import com.course.travel_journal_web_service.dto.UserResponse;
 import com.course.travel_journal_web_service.models.Role;
 import com.course.travel_journal_web_service.models.User;
-import com.course.travel_journal_web_service.models.UserForResponse;
 import com.course.travel_journal_web_service.repos.UserRepos;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -45,6 +45,49 @@ public class UserService {
     }
 
     /**
+     * Обновление данных пользователя
+     *
+     * @param userEditRequest Запрос на изменение данных пользователя
+     * @return Обновленные данные пользователя
+     */
+    public UserResponse updateUserData(UserEditRequest userEditRequest) {
+        // Получаем текущего пользователя
+        User currentUser = getCurrentUser();
+
+        // Проверяем, существует ли пользователь с таким email, если email изменен
+        if (userEditRequest.getEmail() != null && !userEditRequest.getEmail().equals(currentUser.getEmail())) {
+            if (repository.existsByEmail(userEditRequest.getEmail())) {
+                throw new RuntimeException("Пользователь с таким email уже существует");
+            }
+            currentUser.setEmail(userEditRequest.getEmail());
+        }
+
+        // Сохраняем обновленного пользователя
+        User updatedUser = save(currentUser);
+
+        // Возвращаем обновленные данные пользователя
+        return UserResponse.builder()
+                .username(updatedUser.getUsername())
+                .email(updatedUser.getEmail())
+                .build();
+    }
+
+    /**
+     * Получение данных пользователя для отдачи
+     *
+     * @return данные о текущем пользователе
+     */
+    public UserResponse getUserData() {
+        // Получение пользователя
+        User user = getCurrentUser();
+
+        return UserResponse.builder()
+                .username(user.getUsername())
+                .email(user.getEmail())
+                .build();
+    }
+
+    /**
      * Получение пользователя по имени пользователя
      *
      * @return пользователь
@@ -76,22 +119,6 @@ public class UserService {
         var username = SecurityContextHolder.getContext().getAuthentication().getName();
         return getByUsername(username);
     }
-
-    /**
-     * Получение данных пользователя для отдачи
-     *
-     * @return данные о текущем пользователе
-     */
-        public UserResponse getUserData() {
-            // Получение пользователя
-            User user = getCurrentUser();
-
-            return UserResponse.builder()
-                    .username(user.getUsername())
-                    .email(user.getEmail())
-                    .build();
-        }
-
 
     /**
      * Выдача прав администратора текущему пользователю
