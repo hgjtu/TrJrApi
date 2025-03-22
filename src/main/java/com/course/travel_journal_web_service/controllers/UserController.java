@@ -1,13 +1,14 @@
 package com.course.travel_journal_web_service.controllers;
 
-import com.course.travel_journal_web_service.dto.SignInRequest;
-import com.course.travel_journal_web_service.dto.UserEditRequest;
-import com.course.travel_journal_web_service.dto.UserResponse;
+import com.course.travel_journal_web_service.dto.user.UserDeleteRequest;
+import com.course.travel_journal_web_service.dto.user.UserEditRequest;
+import com.course.travel_journal_web_service.dto.user.UserResponse;
 import com.course.travel_journal_web_service.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -25,7 +26,14 @@ public class UserController {
 
     @Operation(summary = "Изменение информации о пользователе")
     @PutMapping("/update-user-data")
-    public UserResponse updateUserData(@RequestBody @Valid UserEditRequest request) {
+    public UserResponse deleteUser(@RequestBody @Valid UserEditRequest request) {
         return userService.updateUserData(request);
+    }
+
+    // TODO УДАЛИТЬ
+    @Operation(summary = "Изменение информации о пользователе")
+    @PutMapping("/delete-user")
+    public void updateUserData(@RequestBody @Valid UserDeleteRequest request) {
+        userService.deleteUser(request);
     }
 }

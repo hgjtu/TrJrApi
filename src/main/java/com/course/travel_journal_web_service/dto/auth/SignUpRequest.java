@@ -1,10 +1,9 @@
-package com.course.travel_journal_web_service.dto;
+package com.course.travel_journal_web_service.dto.auth;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.NoArgsConstructor;

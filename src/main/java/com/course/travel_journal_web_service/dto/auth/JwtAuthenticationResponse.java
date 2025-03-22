@@ -1,4 +1,4 @@
-package com.course.travel_journal_web_service.dto;
+package com.course.travel_journal_web_service.dto.auth;
 
 import com.course.travel_journal_web_service.models.UserForResponse;
 import io.swagger.v3.oas.annotations.media.Schema;

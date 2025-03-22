@@ -1,11 +1,13 @@
 package com.course.travel_journal_web_service.services;
 
-import com.course.travel_journal_web_service.dto.UserEditRequest;
-import com.course.travel_journal_web_service.dto.UserResponse;
+import com.course.travel_journal_web_service.dto.user.UserDeleteRequest;
+import com.course.travel_journal_web_service.dto.user.UserEditRequest;
+import com.course.travel_journal_web_service.dto.user.UserResponse;
 import com.course.travel_journal_web_service.models.Role;
 import com.course.travel_journal_web_service.models.User;
 import com.course.travel_journal_web_service.repos.UserRepos;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -72,6 +74,7 @@ public class UserService {
                 .build();
     }
 
+
     /**
      * Получение данных пользователя для отдачи
      *
@@ -85,6 +88,24 @@ public class UserService {
                 .username(user.getUsername())
                 .email(user.getEmail())
                 .build();
+    }
+
+    /**
+     * Удаление пользователя по имени пользователя
+     *
+     * @param request данные о пользователе для удлаения
+     * @return
+     * @throws UsernameNotFoundException если пользователь с указанным именем не найден
+     */
+    public void deleteUser(UserDeleteRequest request) {
+        // Проверяем, существует ли пользователь с таким именем
+        User user = repository.findByUsername(request.getUsername())
+                .orElseThrow(() ->
+                        new UsernameNotFoundException("Пользователь с именем "
+                                + request.getUsername() + " не найден"));
+
+        // Удаляем пользователя из базы данных
+        repository.delete(user);
     }
 
     /**

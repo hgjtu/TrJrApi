@@ -1,9 +1,9 @@
 package com.course.travel_journal_web_service.controllers;
 
-import com.course.travel_journal_web_service.dto.SignInRequest;
-import com.course.travel_journal_web_service.dto.SignUpRequest;
+import com.course.travel_journal_web_service.dto.auth.SignInRequest;
+import com.course.travel_journal_web_service.dto.auth.SignUpRequest;
 import com.course.travel_journal_web_service.security.AuthenticationService;
-import com.course.travel_journal_web_service.dto.JwtAuthenticationResponse;
+import com.course.travel_journal_web_service.dto.auth.JwtAuthenticationResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

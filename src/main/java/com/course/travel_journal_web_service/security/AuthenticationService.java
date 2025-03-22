@@ -1,8 +1,8 @@
 package com.course.travel_journal_web_service.security;
 
-import com.course.travel_journal_web_service.dto.JwtAuthenticationResponse;
-import com.course.travel_journal_web_service.dto.SignInRequest;
-import com.course.travel_journal_web_service.dto.SignUpRequest;
+import com.course.travel_journal_web_service.dto.auth.JwtAuthenticationResponse;
+import com.course.travel_journal_web_service.dto.auth.SignInRequest;
+import com.course.travel_journal_web_service.dto.auth.SignUpRequest;
 import com.course.travel_journal_web_service.models.Role;
 import com.course.travel_journal_web_service.models.User;
 import com.course.travel_journal_web_service.models.UserForResponse;
