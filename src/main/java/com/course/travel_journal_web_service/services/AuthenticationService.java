@@ -1,4 +1,4 @@
-package com.course.travel_journal_web_service.security;
+package com.course.travel_journal_web_service.services;
 
 import com.course.travel_journal_web_service.dto.auth.JwtAuthenticationResponse;
 import com.course.travel_journal_web_service.dto.auth.SignInRequest;
@@ -6,7 +6,6 @@ import com.course.travel_journal_web_service.dto.auth.SignUpRequest;
 import com.course.travel_journal_web_service.models.Role;
 import com.course.travel_journal_web_service.models.User;
 import com.course.travel_journal_web_service.models.UserForResponse;
-import com.course.travel_journal_web_service.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

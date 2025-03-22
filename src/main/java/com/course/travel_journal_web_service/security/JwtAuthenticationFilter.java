@@ -1,5 +1,6 @@
 package com.course.travel_journal_web_service.security;
 
+import com.course.travel_journal_web_service.services.JwtService;
 import com.course.travel_journal_web_service.services.UserService;
 import io.micrometer.common.util.StringUtils;
 import jakarta.servlet.FilterChain;

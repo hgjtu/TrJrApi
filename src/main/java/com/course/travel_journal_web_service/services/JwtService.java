@@ -1,4 +1,4 @@
-package com.course.travel_journal_web_service.security;
+package com.course.travel_journal_web_service.services;
 
 import com.course.travel_journal_web_service.models.User;
 import io.jsonwebtoken.Claims;

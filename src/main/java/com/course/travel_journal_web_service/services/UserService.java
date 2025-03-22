@@ -1,13 +1,13 @@
 package com.course.travel_journal_web_service.services;
 
-import com.course.travel_journal_web_service.dto.user.UserDeleteRequest;
 import com.course.travel_journal_web_service.dto.user.UserEditRequest;
 import com.course.travel_journal_web_service.dto.user.UserResponse;
 import com.course.travel_journal_web_service.models.Role;
 import com.course.travel_journal_web_service.models.User;
 import com.course.travel_journal_web_service.repos.UserRepos;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
+import org.hibernate.ObjectDeletedException;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -93,19 +93,23 @@ public class UserService {
     /**
      * Удаление пользователя по имени пользователя
      *
-     * @param request данные о пользователе для удлаения
-     * @return
+     * @param username имя пользователя для удлаения
      * @throws UsernameNotFoundException если пользователь с указанным именем не найден
      */
-    public void deleteUser(UserDeleteRequest request) {
-        // Проверяем, существует ли пользователь с таким именем
-        User user = repository.findByUsername(request.getUsername())
-                .orElseThrow(() ->
-                        new UsernameNotFoundException("Пользователь с именем "
-                                + request.getUsername() + " не найден"));
+    public void deleteUser(String username) {
+        User currentUser = getCurrentUser();
 
-        // Удаляем пользователя из базы данных
-        repository.delete(user);
+        // Проверяем, что юзер хочет удалить самого себя
+        if (currentUser.getUsername().equals(username)) {
+            // Проверяем, существует ли пользователь с таким именем
+            User user = repository.findByUsername(username)
+                    .orElseThrow(() ->
+                            new UsernameNotFoundException("Пользователь с именем "
+                                    + username + " не найден"));
+
+            // Удаляем пользователя из базы данных
+            repository.delete(user);
+        }
     }
 
     /**

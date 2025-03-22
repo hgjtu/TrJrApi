@@ -1,6 +1,5 @@
 package com.course.travel_journal_web_service.controllers;
 
-import com.course.travel_journal_web_service.dto.user.UserDeleteRequest;
 import com.course.travel_journal_web_service.dto.user.UserEditRequest;
 import com.course.travel_journal_web_service.dto.user.UserResponse;
 import com.course.travel_journal_web_service.services.UserService;
@@ -32,8 +31,9 @@ public class UserController {
 
     // TODO УДАЛИТЬ
     @Operation(summary = "Изменение информации о пользователе")
-    @PutMapping("/delete-user")
-    public void updateUserData(@RequestBody @Valid UserDeleteRequest request) {
-        userService.deleteUser(request);
+    @DeleteMapping("/delete-user/{username}")
+    public ResponseEntity<Void> updateUserData(@PathVariable String username) {
+        userService.deleteUser(username);
+        return ResponseEntity.noContent().build();
     }
 }
