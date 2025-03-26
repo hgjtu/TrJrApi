@@ -7,7 +7,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -35,5 +38,13 @@ public class UserController {
     public ResponseEntity<Void> updateUserData(@PathVariable String username) {
         userService.deleteUser(username);
         return ResponseEntity.noContent().build();
+    }
+
+    // TODO УДАЛИТЬ
+    @Operation(summary = "Получение доступа к странице юзеров")
+    @GetMapping("")
+    @PreAuthorize("hasAuthority(('ROLE_USER'))")
+    public ResponseEntity<?> pageForUsers(){
+        return ResponseEntity.ok("Страница для пользователя с ролью: ЮЗЕР");
     }
 }

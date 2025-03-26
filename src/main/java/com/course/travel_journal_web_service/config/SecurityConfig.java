@@ -53,6 +53,12 @@ public class SecurityConfig {
                 .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+//                .logout(logout -> logout
+//                        .logoutUrl("/api/auth/logout")
+//                        .logoutSuccessUrl("/")
+//                        .invalidateHttpSession(true)
+//                        .deleteCookies("JSESSIONID")
+//                );
         return http.build();
     }
 
