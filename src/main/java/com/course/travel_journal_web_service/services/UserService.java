@@ -4,6 +4,7 @@ import com.course.travel_journal_web_service.dto.user.UserEditRequest;
 import com.course.travel_journal_web_service.dto.user.UserResponse;
 import com.course.travel_journal_web_service.models.Role;
 import com.course.travel_journal_web_service.models.User;
+import com.course.travel_journal_web_service.models.UserForResponse;
 import com.course.travel_journal_web_service.repos.UserRepos;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.ObjectDeletedException;
@@ -87,6 +88,21 @@ public class UserService {
         return UserResponse.builder()
                 .username(user.getUsername())
                 .email(user.getEmail())
+                .build();
+    }
+
+    /**
+     * Получение минимального кол-ва данных пользователя для отдачи
+     *
+     * @return минимальные данные о текущем пользователе
+     */
+    public UserForResponse getUserMinData() {
+        // Получение пользователя
+        User user = getCurrentUser();
+
+        return UserForResponse.builder()
+                .username(user.getUsername())
+                .role(user.getRole())
                 .build();
     }
 
