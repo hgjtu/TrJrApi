@@ -2,6 +2,7 @@ package com.course.travel_journal_web_service.services;
 
 import com.course.travel_journal_web_service.dto.user.UserEditRequest;
 import com.course.travel_journal_web_service.dto.user.UserResponse;
+import com.course.travel_journal_web_service.dto.user.UserMinResponse;
 import com.course.travel_journal_web_service.models.Role;
 import com.course.travel_journal_web_service.models.User;
 import com.course.travel_journal_web_service.models.UserForResponse;
@@ -96,14 +97,16 @@ public class UserService {
      *
      * @return минимальные данные о текущем пользователе
      */
-    public UserForResponse getUserMinData() {
+    public UserMinResponse getUserMinData() {
         // Получение пользователя
         User user = getCurrentUser();
 
-        return UserForResponse.builder()
+        var userForResponse = UserForResponse.builder()
                 .username(user.getUsername())
                 .role(user.getRole())
                 .build();
+
+        return new UserMinResponse(userForResponse);
     }
 
     /**

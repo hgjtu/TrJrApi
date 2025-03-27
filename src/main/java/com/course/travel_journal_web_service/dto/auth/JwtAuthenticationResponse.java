@@ -17,5 +17,4 @@ public class JwtAuthenticationResponse {
     private String token;
     @Schema(description = "Объект пользователя", example = "{}")
     private UserForResponse user;
-
 }

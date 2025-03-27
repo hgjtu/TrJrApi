@@ -1,6 +1,7 @@
 package com.course.travel_journal_web_service.controllers;
 
 import com.course.travel_journal_web_service.dto.user.UserEditRequest;
+import com.course.travel_journal_web_service.dto.user.UserMinResponse;
 import com.course.travel_journal_web_service.dto.user.UserResponse;
 import com.course.travel_journal_web_service.models.UserForResponse;
 import com.course.travel_journal_web_service.services.UserService;
@@ -23,7 +24,7 @@ public class UserController {
 
     @Operation(summary = "Проверка авторизации пользователя")
     @GetMapping("/check-login")
-    public UserForResponse checkLogin() {
+    public UserMinResponse checkLogin() {
         return userService.getUserMinData();
     }
 
