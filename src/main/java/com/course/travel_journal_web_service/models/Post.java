@@ -1,17 +1,9 @@
 package com.course.travel_journal_web_service.models;
 
-
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
 
 @Entity
 @Builder
@@ -44,4 +36,7 @@ public class Post {
 
     @Column(nullable = false)
     private Integer likes = 0;
+
+    @Transient // Это поле не будет сохраняться в БД, так как оно вычисляемое
+    private Boolean isLiked;
 }

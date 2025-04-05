@@ -39,20 +39,4 @@ public class UserController {
     public UserResponse deleteUser(@RequestBody @Valid UserEditRequest request) {
         return userService.updateUserData(request);
     }
-
-    // TODO УДАЛИТЬ
-    @Operation(summary = "Изменение информации о пользователе")
-    @DeleteMapping("/delete-user/{username}")
-    public ResponseEntity<Void> updateUserData(@PathVariable String username) {
-        userService.deleteUser(username);
-        return ResponseEntity.noContent().build();
-    }
-
-    // TODO УДАЛИТЬ
-    @Operation(summary = "Получение доступа к странице юзеров")
-    @GetMapping("")
-    @PreAuthorize("hasAuthority(('ROLE_USER'))")
-    public ResponseEntity<?> pageForUsers(){
-        return ResponseEntity.ok("Страница для пользователя с ролью: ЮЗЕР");
-    }
 }
