@@ -3,7 +3,6 @@ package com.course.travel_journal_web_service.models;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
