@@ -35,7 +35,7 @@ public class Post {
     private String description;
 
     @Column(nullable = false)
-    private Integer likes = 0;
+    private Long likes = 0L;
 
     @Transient // Это поле не будет сохраняться в БД, так как оно вычисляемое
     private Boolean isLiked;
