@@ -31,7 +31,7 @@ public class Post {
     @Column(nullable = false)
     private String location;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition="TEXT", length = 2000)
     private String description;
 
     @Column(nullable = false)

@@ -39,6 +39,10 @@ public class PostService {
         // Получаем пользователя
         User currentUser = userService.getCurrentUser();
 
+        if(currentUser == null){
+            throw new ExpressionException("You are not logged in");
+        }
+
         Post newPost = new Post();
 
         newPost.setTitle(createPostRequest.getTitle());
@@ -188,9 +192,8 @@ public class PostService {
      */
     public PageResponse<PostResponse> findAllPosts(Integer page, Integer limit, String sort, String search) {
         Page<Post> postPage = switch (sort) {
-            case "earliest" -> repository.findAll(PageRequest.of(page, limit, PostSort.DATE_ASC.getSortValue()));
-            case "popular" -> repository.findAll(PageRequest.of(page, limit, PostSort.LIKES_DESC.getSortValue()));
-            case "unpopular" -> repository.findAll(PageRequest.of(page, limit, PostSort.LIKES_ASC.getSortValue()));
+            case "subscriptions" -> repository.findAll(PageRequest.of(page, limit, PostSort.LIKES_DESC.getSortValue()));
+            case "my-posts" -> repository.findAll(PageRequest.of(page, limit, PostSort.LIKES_ASC.getSortValue()));
             default -> repository.findAll(PageRequest.of(page, limit, PostSort.DATE_DESC.getSortValue()));
         };
 
