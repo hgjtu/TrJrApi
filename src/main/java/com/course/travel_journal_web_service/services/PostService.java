@@ -39,7 +39,7 @@ public class PostService {
         // Получаем пользователя
         User currentUser = userService.getCurrentUser();
 
-        if(currentUser == null){
+        if(currentUser == null){ //это не выполнится раньше упадет по ошибке
             throw new ExpressionException("You are not logged in");
         }
 
@@ -113,6 +113,15 @@ public class PostService {
         // Получение поста
         Post post = getPostById(post_id);
 
+        boolean isLiked = false;
+
+        try{
+            User currentUser = userService.getCurrentUser();
+            isLiked = postLikeRepos
+                    .existsByUserAndPost(currentUser, post);
+        }
+        catch (Exception ignored){  }
+
         return PostResponse.builder()
                 .id(post.getId())
                 .title(post.getTitle())
@@ -121,8 +130,7 @@ public class PostService {
                 .location(post.getLocation())
                 .description(post.getDescription())
                 .likes(post.getLikes())
-                .isLiked(postLikeRepos
-                        .existsByUserAndPost(userService.getCurrentUser(), post))
+                .isLiked(isLiked)
                 .build();
     }
 
