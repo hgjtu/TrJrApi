@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepos repository;
+    private final MinioService minioService;
 
     /**
      * Сохранение пользователя

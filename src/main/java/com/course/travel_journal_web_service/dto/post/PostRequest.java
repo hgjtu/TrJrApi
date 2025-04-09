@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 
+import java.awt.*;
 import java.time.LocalDateTime;
 
 @Data
@@ -25,4 +26,7 @@ public class PostRequest {
     @Schema(description = "Основной текст поста", example = "Потрясающие закаты, белоснежные дома и синее море...")
     @Size(max = 2000, message = "Основной текст поста must be up to 2000 characters")
     private String description;
+
+    @Schema(description = "Изображение для поста", example = "")
+    private Image image;
 }

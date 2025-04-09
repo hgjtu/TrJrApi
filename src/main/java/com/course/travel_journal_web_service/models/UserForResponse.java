@@ -11,6 +11,9 @@ public class UserForResponse {
     @Schema(description = "Имя пользователя", example = "Jon")
     private String username;
 
+    @Schema(description = "Изображение профиля", example = "none-user-img")
+    private String image;
+
     @Schema(description = "Роль пользователя", example = "USER")
     private Role role;
 
