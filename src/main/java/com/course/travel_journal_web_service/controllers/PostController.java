@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
@@ -27,7 +28,7 @@ public class PostController {
     private final PostService postService;
 
     @Operation(summary = "Изменение информации в посте")
-    @PostMapping("/create-post")
+    @PostMapping(value  = "/create-post", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = { MediaType.APPLICATION_JSON_VALUE })
     public PostResponse createPost(@RequestPart("post") @Valid PostRequest request,
                                    @RequestPart(value = "image", required = false) MultipartFile image) throws Exception {
         return postService.createPost(request, image);
@@ -40,7 +41,7 @@ public class PostController {
     }
 
     @Operation(summary = "Изменение информации в посте")
-    @PutMapping("/update-post-data")
+    @PutMapping(value = "/update-post-data", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public PostResponse updatePostData(@RequestPart("post") @Valid PostRequest request,
                                        @RequestPart(value = "image", required = false) MultipartFile image) throws Exception {
         return postService.updatePostData(request, image);

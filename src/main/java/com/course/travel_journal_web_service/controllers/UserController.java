@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -37,7 +38,7 @@ public class UserController {
     }
 
     @Operation(summary = "Изменение информации о пользователе")
-    @PutMapping("/update-user-data")
+    @PutMapping(value = "/update-user-data", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public UserResponse deleteUser(@RequestPart("user") @Valid UserEditRequest request,
                                    @RequestPart(value = "image", required = false) MultipartFile image) throws Exception {
         return userService.updateUserData(request, image);
