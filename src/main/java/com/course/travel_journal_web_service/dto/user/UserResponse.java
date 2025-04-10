@@ -17,5 +17,5 @@ public class UserResponse {
     @Schema(description = "Адрес электронной почты", example = "jondoe@gmail.com")
     private String email;
     @Schema(description = "Ссылка на изображение профиля", example = "")
-    private String image;
+    private String imageUrl;
 }

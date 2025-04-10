@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Validated
 @RestController
@@ -27,8 +28,9 @@ public class PostController {
 
     @Operation(summary = "Изменение информации в посте")
     @PostMapping("/create-post")
-    public PostResponse createPost(@RequestBody @Valid PostRequest request) {
-        return postService.createPost(request);
+    public PostResponse createPost(@RequestPart("post") @Valid PostRequest request,
+                                   @RequestPart(value = "image", required = false) MultipartFile image) throws Exception {
+        return postService.createPost(request, image);
     }
 
     @Operation(summary = "Получение информации о посте")
@@ -39,8 +41,9 @@ public class PostController {
 
     @Operation(summary = "Изменение информации в посте")
     @PutMapping("/update-post-data")
-    public PostResponse updatePostData(@RequestBody @Valid PostRequest request) {
-        return postService.updatePostData(request);
+    public PostResponse updatePostData(@RequestPart("post") @Valid PostRequest request,
+                                       @RequestPart(value = "image", required = false) MultipartFile image) throws Exception {
+        return postService.updatePostData(request, image);
     }
 
     @Operation(summary = "Удаление поста")

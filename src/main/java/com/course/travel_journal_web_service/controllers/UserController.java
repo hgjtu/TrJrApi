@@ -1,5 +1,6 @@
 package com.course.travel_journal_web_service.controllers;
 
+import com.course.travel_journal_web_service.dto.post.PostRequest;
 import com.course.travel_journal_web_service.dto.user.UserEditRequest;
 import com.course.travel_journal_web_service.dto.user.UserMinResponse;
 import com.course.travel_journal_web_service.dto.user.UserResponse;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -23,8 +25,8 @@ public class UserController {
     private final UserService userService;
 
     @Operation(summary = "Проверка авторизации пользователя")
-    @GetMapping("/check-login")
-    public UserMinResponse checkLogin() {
+    @GetMapping("/check-session")
+    public UserForResponse checkSession() {
         return userService.getUserMinData();
     }
 
@@ -36,7 +38,8 @@ public class UserController {
 
     @Operation(summary = "Изменение информации о пользователе")
     @PutMapping("/update-user-data")
-    public UserResponse deleteUser(@RequestBody @Valid UserEditRequest request) {
-        return userService.updateUserData(request);
+    public UserResponse deleteUser(@RequestPart("user") @Valid UserEditRequest request,
+                                   @RequestPart(value = "image", required = false) MultipartFile image) throws Exception {
+        return userService.updateUserData(request, image);
     }
 }

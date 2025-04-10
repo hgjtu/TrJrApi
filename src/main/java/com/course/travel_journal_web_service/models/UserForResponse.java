@@ -12,7 +12,7 @@ public class UserForResponse {
     private String username;
 
     @Schema(description = "Изображение профиля", example = "none-user-img")
-    private String image;
+    private String imageUrl;
 
     @Schema(description = "Роль пользователя", example = "USER")
     private Role role;

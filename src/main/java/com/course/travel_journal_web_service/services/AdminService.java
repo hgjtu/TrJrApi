@@ -7,8 +7,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class AdminService extends UserService {
-    public AdminService(UserRepos repository) {
-        super(repository);
+    public AdminService(UserRepos repository, MinioService minioService) {
+        super(repository, minioService);
     }
 
     /**

@@ -35,11 +35,14 @@ public class Post {
     private String description;
 
     @Column(nullable = false)
-    private String image = "none-post-img";
+    private String imageName = "default-post-img";
 
     @Column(nullable = false)
     private Long likes = 0L;
 
     @Transient // Это поле не будет сохраняться в БД, так как оно вычисляемое
     private Boolean isLiked;
+
+    @Transient // Это поле не будет сохраняться в БД
+    private String imageUrl;
 }

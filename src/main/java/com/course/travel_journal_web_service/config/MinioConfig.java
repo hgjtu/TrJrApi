@@ -28,7 +28,7 @@ public class MinioConfig {
     }
 
     @Bean
-    public String bucketName() {
+    public String minioBucketName() {
         return bucketName;
     }
 }

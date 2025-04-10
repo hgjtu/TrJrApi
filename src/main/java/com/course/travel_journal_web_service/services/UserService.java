@@ -14,11 +14,14 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
+//    private final String serviceName = "Users";
     private final UserRepos repository;
+
     private final MinioService minioService;
 
     /**
@@ -36,7 +39,7 @@ public class UserService {
      *
      * @return созданный пользователь
      */
-    public User create(User user) {
+    public User createUser(User user) {
         if (repository.existsByUsername(user.getUsername())) {
             // Заменить на свои исключения
             throw new RuntimeException("Пользователь с таким именем уже существует");
@@ -55,7 +58,8 @@ public class UserService {
      * @param userEditRequest Запрос на изменение данных пользователя
      * @return Обновленные данные пользователя
      */
-    public UserResponse updateUserData(UserEditRequest userEditRequest) {
+    public UserResponse updateUserData(UserEditRequest userEditRequest,
+                                       MultipartFile imageFile) throws Exception {
         // Получаем текущего пользователя
         User currentUser = getCurrentUser();
 
@@ -67,6 +71,13 @@ public class UserService {
             currentUser.setEmail(userEditRequest.getEmail());
         }
 
+        if (imageFile != null && !imageFile.isEmpty()) {
+            String imageName = minioService.uploadFile(imageFile);
+            currentUser.setImageName(imageName);
+        } else {
+            currentUser.setImageName("default-user-img");
+        }
+
         // Сохраняем обновленного пользователя
         User updatedUser = save(currentUser);
 
@@ -74,6 +85,8 @@ public class UserService {
         return UserResponse.builder()
                 .username(updatedUser.getUsername())
                 .email(updatedUser.getEmail())
+                .imageUrl(minioService
+                        .getFileUrl(updatedUser.getImageName()))
                 .build();
     }
 
@@ -89,6 +102,8 @@ public class UserService {
 
         return UserResponse.builder()
                 .username(user.getUsername())
+                .imageUrl(minioService
+                        .getFileUrl(user.getImageName()))
                 .email(user.getEmail())
                 .build();
     }
@@ -98,39 +113,39 @@ public class UserService {
      *
      * @return минимальные данные о текущем пользователе
      */
-    public UserMinResponse getUserMinData() {
+    public UserForResponse getUserMinData() {
         // Получение пользователя
         User user = getCurrentUser();
 
-        var userForResponse = UserForResponse.builder()
+        return UserForResponse.builder()
                 .username(user.getUsername())
+                .imageUrl(minioService
+                        .getFileUrl(user.getImageName()))
                 .role(user.getRole())
                 .build();
-
-        return new UserMinResponse(userForResponse);
     }
 
-    /**
-     * Удаление пользователя по имени пользователя
-     *
-     * @param username имя пользователя для удлаения
-     * @throws UsernameNotFoundException если пользователь с указанным именем не найден
-     */
-    public void deleteUser(String username) {
-        User currentUser = getCurrentUser();
-
-        // Проверяем, что юзер хочет удалить самого себя
-        if (currentUser.getUsername().equals(username)) {
-            // Проверяем, существует ли пользователь с таким именем
-            User user = repository.findByUsername(username)
-                    .orElseThrow(() ->
-                            new UsernameNotFoundException("Пользователь с именем "
-                                    + username + " не найден"));
-
-            // Удаляем пользователя из базы данных
-            repository.delete(user);
-        }
-    }
+//    /**
+//     * Удаление пользователя по имени пользователя
+//     *
+//     * @param username имя пользователя для удлаения
+//     * @throws UsernameNotFoundException если пользователь с указанным именем не найден
+//     */
+//    public void deleteUser(String username) {
+//        User currentUser = getCurrentUser();
+//
+//        // Проверяем, что юзер хочет удалить самого себя
+//        if (currentUser.getUsername().equals(username)) {
+//            // Проверяем, существует ли пользователь с таким именем
+//            User user = repository.findByUsername(username)
+//                    .orElseThrow(() ->
+//                            new UsernameNotFoundException("Пользователь с именем "
+//                                    + username + " не найден"));
+//
+//            // Удаляем пользователя из базы данных
+//            repository.delete(user);
+//        }
+//    }
 
     /**
      * Получение пользователя по имени пользователя

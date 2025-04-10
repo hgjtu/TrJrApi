@@ -37,7 +37,7 @@ public class PostResponse {
     private String description;
 
     @Schema(description = "Ссылка на изображение", example = "none-post-img")
-    private String image;
+    private String imageUrl;
 
     @Schema(description = "Кол-во лайков на посте", example = "123")
     private Long likes;

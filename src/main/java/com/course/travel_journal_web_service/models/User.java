@@ -33,7 +33,7 @@ public class User implements UserDetails {
     private String email;
 
     @Column(nullable = false)
-    private String image = "none-user-img";
+    private String imageName = "default-user-img";
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -41,6 +41,9 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Post> posts;
+
+    @Transient // Это поле не будет сохраняться в БД
+    private String imageUrl;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
