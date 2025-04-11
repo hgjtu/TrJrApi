@@ -4,11 +4,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 
-import java.awt.*;
-import java.time.LocalDateTime;
-
 @Data
-@Schema(description = "Запрос на добавление, изменение поста")
+@Schema(description = "Запрос на изменение поста")
 public class PostRequest {
     @Schema(description = "Id поста", example = "1")
     private Long id;

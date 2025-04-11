@@ -90,7 +90,7 @@ public class PostService {
      */
     public PostResponse updatePostData(PostRequest postEditRequest,
                                        MultipartFile imageFile) throws Exception {
-    // Получаем пост по ID
+         // Получаем пост по ID
         User currentUser = userService.getCurrentUser();
         Post post = getPostById(postEditRequest.getId());
 

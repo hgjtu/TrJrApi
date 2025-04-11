@@ -1,5 +1,7 @@
 package com.course.travel_journal_web_service.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 //import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.MediaType;

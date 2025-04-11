@@ -3,8 +3,6 @@ package com.course.travel_journal_web_service.controllers;
 import com.course.travel_journal_web_service.dto.post.PostRequest;
 import com.course.travel_journal_web_service.dto.post.PostResponse;
 import com.course.travel_journal_web_service.models.PageResponse;
-import com.course.travel_journal_web_service.models.Post;
-import com.course.travel_journal_web_service.models.PostSort;
 import com.course.travel_journal_web_service.services.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -14,7 +12,6 @@ import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,11 +27,11 @@ public class PostController {
     @Operation(summary = "Создание поста")
     @PostMapping(
             value = "/create-post",
-            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
     )
-    public PostResponse createPost(@RequestPart("post") @Valid PostRequest request,
-                                   @RequestPart(value = "image", required = false) MultipartFile image) throws Exception {
+    public PostResponse createPost(
+            @RequestPart("post") @Valid PostRequest request,
+            @RequestPart(value = "image", required = false) MultipartFile image) throws Exception {
         return postService.createPost(request, image);
     }
 
