@@ -63,7 +63,7 @@ public class PostService {
             String imageName = minioService.uploadFile(imageFile);
             newPost.setImageName(imageName);
         } else {
-            newPost.setImageName("default-post-img");
+            newPost.setImageName("default-post-img.png");
         }
 
         save(newPost);

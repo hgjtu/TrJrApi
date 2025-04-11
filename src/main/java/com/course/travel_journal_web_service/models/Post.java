@@ -35,7 +35,7 @@ public class Post {
     private String description;
 
     @Column(nullable = false)
-    private String imageName = "default-post-img";
+    private String imageName = "default-post-img.png";
 
     @Column(nullable = false)
     private Long likes = 0L;

@@ -25,10 +25,7 @@ public class PostController {
     private final PostService postService;
 
     @Operation(summary = "Создание поста")
-    @PostMapping(
-            value = "/create-post",
-            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
-    )
+    @PostMapping(value = "/create-post", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public PostResponse createPost(
             @RequestPart("post") @Valid PostRequest request,
             @RequestPart(value = "image", required = false) MultipartFile image) throws Exception {

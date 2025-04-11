@@ -33,7 +33,7 @@ public class UserController {
 
     @Operation(summary = "Изменение информации о пользователе")
     @PutMapping(value = "/update-user-data", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public UserResponse deleteUser(@RequestPart("user") @Valid UserEditRequest request,
+    public UserResponse updateUser(@RequestPart("user") @Valid UserEditRequest request,
                                    @RequestPart(value = "image", required = false) MultipartFile image) throws Exception {
         return userService.updateUserData(request, image);
     }
