@@ -8,7 +8,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -36,5 +38,12 @@ public class UserController {
     public UserResponse updateUser(@RequestPart("user") @Valid UserEditRequest request,
                                    @RequestPart(value = "image", required = false) MultipartFile image) throws Exception {
         return userService.updateUserData(request, image);
+    }
+
+    @Operation(summary = "Получение информации о пользователе")
+    @PostMapping("/reset-user-image")
+    public ResponseEntity<?> resetUserImage() {
+        userService.resetUserImage();
+        return ResponseEntity.ok("");
     }
 }

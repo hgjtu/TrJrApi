@@ -2,6 +2,7 @@ package com.course.travel_journal_web_service.models;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.core.io.Resource;
 
 import java.time.LocalDateTime;
 

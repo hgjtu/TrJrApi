@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.core.io.Resource;
 
 import java.time.LocalDateTime;
 
@@ -36,8 +37,8 @@ public class PostResponse {
     @Schema(description = "Основной текст поста", example = "Потрясающие закаты, белоснежные дома и синее море...")
     private String description;
 
-    @Schema(description = "Название изображения", example = "none-post-img")
-    private String imageName;
+    @Schema(description = "base64 изображение", example = "none-post-img")
+    private String image;
 
     @Schema(description = "Кол-во лайков на посте", example = "123")
     private Long likes;

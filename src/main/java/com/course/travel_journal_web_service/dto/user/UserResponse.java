@@ -16,6 +16,6 @@ public class UserResponse {
     private String username;
     @Schema(description = "Адрес электронной почты", example = "jondoe@gmail.com")
     private String email;
-    @Schema(description = "Название изображения", example = "")
-    private String imageName;
+    @Schema(description = "base64 изображения", example = "")
+    private String image;
 }

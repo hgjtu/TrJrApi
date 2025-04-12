@@ -7,6 +7,7 @@ import com.course.travel_journal_web_service.models.Role;
 import com.course.travel_journal_web_service.models.User;
 import com.course.travel_journal_web_service.models.UserForResponse;
 import com.course.travel_journal_web_service.repos.UserRepos;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.ObjectDeletedException;
 import org.springframework.context.annotation.Bean;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class UserService {
 //    private final String serviceName = "Users";
@@ -63,32 +65,49 @@ public class UserService {
         // Получаем текущего пользователя
         User currentUser = getCurrentUser();
 
-        // Проверяем, существует ли пользователь с таким email, если email изменен
-        if (userEditRequest.getEmail() != null && !userEditRequest.getEmail().equals(currentUser.getEmail())) {
-            if (repository.existsByEmail(userEditRequest.getEmail())) {
-                throw new RuntimeException("Пользователь с таким email уже существует");
+        try{
+            // Проверяем, существует ли пользователь с таким email, если email изменен
+            if (userEditRequest.getEmail() != null && !userEditRequest.getEmail().equals(currentUser.getEmail())) {
+                if (repository.existsByEmail(userEditRequest.getEmail())) {
+                    throw new RuntimeException("Пользователь с таким email уже существует");
+                }
+                currentUser.setEmail(userEditRequest.getEmail());
             }
-            currentUser.setEmail(userEditRequest.getEmail());
+
+            if (imageFile != null && !imageFile.isEmpty()) {
+                String imageName = minioService.uploadFile(imageFile);
+                currentUser.setImageName(imageName);
+            }
+
+            // Сохраняем обновленного пользователя
+            User updatedUser = save(currentUser);
+
+            if (!minioService.fileExists(updatedUser.getImageName())) {
+                resetUserImage();
+            }
+
+            // Возвращаем обновленные данные пользователя
+            return UserResponse.builder()
+                    .username(updatedUser.getUsername())
+                    .email(updatedUser.getEmail())
+                    .image(minioService.getFileAsBase64(updatedUser.getImageName()))
+                    .build();
         }
-
-        if (imageFile != null && !imageFile.isEmpty()) {
-            String imageName = minioService.uploadFile(imageFile);
-            currentUser.setImageName(imageName);
-        } else {
-            currentUser.setImageName("default-user-img");
+        catch (Exception e){
+//            throw new RuntimeException(e.getMessage());
+            return null;
         }
-
-        // Сохраняем обновленного пользователя
-        User updatedUser = save(currentUser);
-
-        // Возвращаем обновленные данные пользователя
-        return UserResponse.builder()
-                .username(updatedUser.getUsername())
-                .email(updatedUser.getEmail())
-                .imageName(updatedUser.getImageName())
-                .build();
     }
 
+    /**
+     * Сброс фото профиля до базоыой картинки
+     *
+     */
+    public void resetUserImage() {
+        User currentUser = getCurrentUser();
+        currentUser.setImageName("default-user-img.png");
+        save(currentUser);
+    }
 
     /**
      * Получение данных пользователя для отдачи
@@ -99,11 +118,20 @@ public class UserService {
         // Получение пользователя
         User user = getCurrentUser();
 
-        return UserResponse.builder()
-                .username(user.getUsername())
-                .imageName(user.getImageName())
-                .email(user.getEmail())
-                .build();
+        if (!minioService.fileExists(user.getImageName())) {
+            resetUserImage();
+        }
+
+        try {
+            return UserResponse.builder()
+                    .username(user.getUsername())
+                    .image(minioService.getFileAsBase64(user.getImageName()))
+                    .email(user.getEmail())
+                    .build();
+        }
+        catch (Exception e){
+            return null;
+        }
     }
 
     /**
@@ -115,35 +143,22 @@ public class UserService {
         // Получение пользователя
         User user = getCurrentUser();
 
-        return UserForResponse.builder()
-                .username(user.getUsername())
-                .imageUrl(minioService
-                        .getFileUrl(user.getImageName()))
-                .role(user.getRole())
-                .build();
-    }
+        try{
+            if (!minioService.fileExists(user.getImageName())) {
+                resetUserImage();
+            }
 
-//    /**
-//     * Удаление пользователя по имени пользователя
-//     *
-//     * @param username имя пользователя для удлаения
-//     * @throws UsernameNotFoundException если пользователь с указанным именем не найден
-//     */
-//    public void deleteUser(String username) {
-//        User currentUser = getCurrentUser();
-//
-//        // Проверяем, что юзер хочет удалить самого себя
-//        if (currentUser.getUsername().equals(username)) {
-//            // Проверяем, существует ли пользователь с таким именем
-//            User user = repository.findByUsername(username)
-//                    .orElseThrow(() ->
-//                            new UsernameNotFoundException("Пользователь с именем "
-//                                    + username + " не найден"));
-//
-//            // Удаляем пользователя из базы данных
-//            repository.delete(user);
-//        }
-//    }
+            return UserForResponse.builder()
+                    .username(user.getUsername())
+                    .image(minioService.getFileAsBase64(user.getImageName()))
+                    .role(user.getRole())
+                    .build();
+        }
+        catch (Exception e){
+            return null;
+        }
+
+    }
 
     /**
      * Получение пользователя по имени пользователя

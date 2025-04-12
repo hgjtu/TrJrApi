@@ -5,6 +5,7 @@ import com.course.travel_journal_web_service.dto.post.PostResponse;
 import com.course.travel_journal_web_service.models.*;
 import com.course.travel_journal_web_service.repos.PostLikeRepos;
 import com.course.travel_journal_web_service.repos.PostRepos;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -15,8 +16,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class PostService {
 //    private final String serviceName = "Posts";
@@ -68,6 +71,10 @@ public class PostService {
 
         save(newPost);
 
+        if (!minioService.fileExists(newPost.getImageName())) {
+            resetPostImage(newPost.getId());
+        }
+
         return PostResponse.builder()
                 .id(newPost.getId())
                 .title(newPost.getTitle())
@@ -75,7 +82,7 @@ public class PostService {
                 .date(newPost.getDate())
                 .location(newPost.getLocation())
                 .description(newPost.getDescription())
-                .imageName(newPost.getImageName())
+                .image(minioService.getFileAsBase64(newPost.getImageName()))
                 .likes(newPost.getLikes())
                 .isLiked(false)
                 .build();
@@ -111,6 +118,10 @@ public class PostService {
         // Сохраняем обновленный пост
         Post newPost = save(post);
 
+        if (!minioService.fileExists(newPost.getImageName())) {
+            resetPostImage(newPost.getId());
+        }
+
         // Возвращаем обновленные данные о посте
         return PostResponse.builder()
                 .id(newPost.getId())
@@ -119,7 +130,7 @@ public class PostService {
                 .date(newPost.getDate())
                 .location(newPost.getLocation())
                 .description(newPost.getDescription())
-                .imageName(newPost.getImageName())
+                .image(minioService.getFileAsBase64(newPost.getImageName()))
                 .likes(newPost.getLikes())
                 .isLiked(postLikeRepos.
                         existsByUserAndPost(currentUser,newPost))
@@ -145,6 +156,10 @@ public class PostService {
         }
         catch (Exception ignored){  }
 
+        if (!minioService.fileExists(post.getImageName())) {
+            resetPostImage(post.getId());
+        }
+
         return PostResponse.builder()
                 .id(post.getId())
                 .title(post.getTitle())
@@ -154,7 +169,7 @@ public class PostService {
                 .description(post.getDescription())
 //                .imageUrl(minioService
 //                        .getFileUrl(post.getImageName()))
-                .imageName(post.getImageName())
+                .image(minioService.getFileAsBase64(post.getImageName()))
                 .likes(post.getLikes())
                 .isLiked(isLiked)
                 .build();
@@ -175,6 +190,10 @@ public class PostService {
                 || currentUser.getRole() == Role.ROLE_ADMIN)){
             throw new ExpressionException("Нельзя удалить не свой пост");
         }
+
+        // Удаляем все записи о лайках этого поста
+        postLikeRepos.deleteAllByPost(post);
+
         repository.delete(post);
     }
 
@@ -209,6 +228,16 @@ public class PostService {
     }
 
     /**
+     * Сброс фото поста до базовой картинки
+     *
+     */
+    public void resetPostImage(Long post_id) {
+        Post post = getPostById(post_id);
+        post.setImageName("default-post-img.png");
+        save(post);
+    }
+
+    /**
      * Получение поста по id
      *
      * @return пост
@@ -239,7 +268,7 @@ public class PostService {
                         .date(post.getDate())
                         .location(post.getLocation())
                         .description(post.getDescription())
-                        .imageName(post.getImageName())
+                        .image(minioService.getFileAsBase64(post.getImageName()))
                         .likes(post.getLikes())
                         .isLiked(post.getIsLiked())
                         .build())
