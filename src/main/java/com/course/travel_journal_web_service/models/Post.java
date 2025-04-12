@@ -44,5 +44,5 @@ public class Post {
     private Boolean isLiked;
 
     @Transient // Это поле не будет сохраняться в БД
-    private String imageUrl;
+    private String image;
 }

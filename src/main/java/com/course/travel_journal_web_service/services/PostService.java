@@ -75,8 +75,7 @@ public class PostService {
                 .date(newPost.getDate())
                 .location(newPost.getLocation())
                 .description(newPost.getDescription())
-                .imageUrl(minioService
-                        .getFileUrl(newPost.getImageName()))
+                .imageName(newPost.getImageName())
                 .likes(newPost.getLikes())
                 .isLiked(false)
                 .build();
@@ -120,8 +119,7 @@ public class PostService {
                 .date(newPost.getDate())
                 .location(newPost.getLocation())
                 .description(newPost.getDescription())
-                .imageUrl(minioService
-                        .getFileUrl(newPost.getImageName()))
+                .imageName(newPost.getImageName())
                 .likes(newPost.getLikes())
                 .isLiked(postLikeRepos.
                         existsByUserAndPost(currentUser,newPost))
@@ -154,8 +152,9 @@ public class PostService {
                 .date(post.getDate())
                 .location(post.getLocation())
                 .description(post.getDescription())
-                .imageUrl(minioService
-                        .getFileUrl(post.getImageName()))
+//                .imageUrl(minioService
+//                        .getFileUrl(post.getImageName()))
+                .imageName(post.getImageName())
                 .likes(post.getLikes())
                 .isLiked(isLiked)
                 .build();
@@ -240,8 +239,7 @@ public class PostService {
                         .date(post.getDate())
                         .location(post.getLocation())
                         .description(post.getDescription())
-                        .imageUrl(minioService
-                                .getFileUrl(post.getImageName()))
+                        .imageName(post.getImageName())
                         .likes(post.getLikes())
                         .isLiked(post.getIsLiked())
                         .build())

@@ -85,8 +85,7 @@ public class UserService {
         return UserResponse.builder()
                 .username(updatedUser.getUsername())
                 .email(updatedUser.getEmail())
-                .imageUrl(minioService
-                        .getFileUrl(updatedUser.getImageName()))
+                .imageName(updatedUser.getImageName())
                 .build();
     }
 
@@ -102,8 +101,7 @@ public class UserService {
 
         return UserResponse.builder()
                 .username(user.getUsername())
-                .imageUrl(minioService
-                        .getFileUrl(user.getImageName()))
+                .imageName(user.getImageName())
                 .email(user.getEmail())
                 .build();
     }
