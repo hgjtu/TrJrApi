@@ -5,18 +5,25 @@ import com.course.travel_journal_web_service.dto.post.PostResponse;
 import com.course.travel_journal_web_service.models.*;
 import com.course.travel_journal_web_service.repos.PostLikeRepos;
 import com.course.travel_journal_web_service.repos.PostRepos;
+import jakarta.persistence.criteria.Predicate;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.expression.ExpressionException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -249,17 +256,109 @@ public class PostService {
     }
 
     /**
-     * Получение всех постов (с пагинацией)
+     * Получение всех постов (с пагинацией и фильтрацией)
      *
-     * @return пост
+     * @param page номер страницы
+     * @param limit количество элементов на странице
+     * @param search строка поиска в формате "author=...&title=...&location=...&startDate=...&endDate=..."
+     * @return посты по запросу
      */
     public PageResponse<PostResponse> findAllPosts(Integer page, Integer limit, String sort, String search) {
-        Page<Post> postPage = switch (sort) {
-            case "subscriptions" -> repository.findAll(PageRequest.of(page, limit, PostSort.LIKES_DESC.getSortValue()));
-            case "my-posts" -> repository.findAll(PageRequest.of(page, limit, PostSort.LIKES_ASC.getSortValue()));
-            default -> repository.findAll(PageRequest.of(page, limit, PostSort.DATE_DESC.getSortValue()));
-        };
+//        Page<Post> postPage = switch (sort) {
+//            case "subscriptions" -> repository.findAll(PageRequest.of(page, limit, PostSort.LIKES_DESC.getSortValue()));
+//            case "my-posts" -> repository.findAll(PageRequest.of(page, limit, PostSort.LIKES_ASC.getSortValue()));
+//            default -> repository.findAll(PageRequest.of(page, limit, PostSort.DATE_DESC.getSortValue()));
+//        };
 
+        Specification<Post> spec = Specification.where(null);
+
+        if(Objects.equals(sort, "my-posts")){
+            String author = userService.getCurrentUser().getUsername();
+            spec = spec.and((root, query, cb) ->
+                    cb.like(cb.lower(root.get("author").get("username")), "%" + author.toLowerCase() + "%"));
+        }
+
+        if (search != null && !search.isEmpty()) {
+            Map<String, String> searchParams = Arrays.stream(search.split("&"))
+                    .map(param -> param.split("="))
+                    .filter(pair -> pair.length == 2)
+                    .collect(Collectors.toMap(
+                            pair -> pair[0],
+                            pair -> {
+                                try {
+                                    return URLDecoder.decode(pair[1], StandardCharsets.UTF_8.toString());
+                                } catch (UnsupportedEncodingException e) {
+                                    return pair[1];
+                                }
+                            }
+                    ));
+
+            // Фильтр по автору
+            if (searchParams.containsKey("author") && !Objects.equals(sort, "my-posts")) {
+                String author = searchParams.get("author");
+                spec = spec.and((root, query, cb) ->
+                        cb.like(cb.lower(root.get("author").get("username")), "%" + author.toLowerCase() + "%"));
+            }
+
+            // Фильтр по заголовку
+            if (searchParams.containsKey("title")) {
+                String title = searchParams.get("title");
+                spec = spec.and((root, query, cb) ->
+                        cb.like(cb.lower(root.get("title")), "%" + title.toLowerCase() + "%"));
+            }
+
+            // Фильтр по местоположению
+            if (searchParams.containsKey("location")) {
+                String location = searchParams.get("location");
+                spec = spec.and((root, query, cb) ->
+                        cb.like(cb.lower(root.get("location")), "%" + location.toLowerCase() + "%"));
+            }
+
+            // Фильтр по дате (диапазон)
+            if (searchParams.containsKey("startDate") || searchParams.containsKey("endDate")) {
+                try {
+                    LocalDateTime startDate = searchParams.containsKey("startDate")
+                            ? LocalDateTime.parse(searchParams.get("startDate"))
+                            : null;
+                    LocalDateTime endDate = searchParams.containsKey("endDate")
+                            ? LocalDateTime.parse(searchParams.get("endDate"))
+                            : null;
+
+                    spec = spec.and((root, query, cb) -> {
+                        List<Predicate> predicates = new ArrayList<>();
+                        if (startDate != null) {
+                            predicates.add(cb.greaterThanOrEqualTo(root.get("date"), startDate));
+                        }
+                        if (endDate != null) {
+                            predicates.add(cb.lessThanOrEqualTo(root.get("date"), endDate));
+                        }
+                        return cb.and(predicates.toArray(new Predicate[0]));
+                    });
+                } catch (DateTimeParseException e) {
+                    // Логируем ошибку, но не прерываем выполнение
+//                    logger.error("Error parsing date filter parameters", e);
+                }
+            }
+        }
+
+        Page<Post> postPage = repository.findAll(spec, PageRequest.of(page, limit, PostSort.DATE_DESC.getSortValue()));
+
+        return getPageResponseFromPostPage(postPage);
+    }
+
+    /**
+     * Получение самых популярных постов
+     *
+     * @return самые попоулярныек посты
+     */
+    public PageResponse<PostResponse> findRecommendedPosts() {
+        Page<Post> postPage = repository.findAll(PageRequest.of(0, 5, PostSort.LIKES_DESC.getSortValue()));
+
+        return getPageResponseFromPostPage(postPage);
+    }
+
+    @NotNull
+    private PageResponse<PostResponse> getPageResponseFromPostPage(Page<Post> postPage) {
         List<PostResponse> content = postPage.getContent().stream()
                 .map(post -> PostResponse.builder()
                         .id(post.getId())
@@ -284,6 +383,5 @@ public class PostService {
                 postPage.isLast()
         );
     }
-
 
 }

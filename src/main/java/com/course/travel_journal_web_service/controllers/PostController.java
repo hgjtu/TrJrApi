@@ -61,10 +61,16 @@ public class PostController {
 
     @Operation(summary = "Получить данные о всех постах (пагинация)")
     @GetMapping("/get-posts-data")
-    public PageResponse<PostResponse> createPost(@RequestParam(value = "page", defaultValue = "0") @Min(0) Integer page,
+    public PageResponse<PostResponse> getPostsData(@RequestParam(value = "page", defaultValue = "0") @Min(0) Integer page,
                                                  @RequestParam(value = "limit", defaultValue = "20") @Min(1) @Max(100) Integer limit,
                                                  @RequestParam(value = "sort") String sort,
                                                  @RequestParam(value = "search", required = false) String search){
         return postService.findAllPosts(page, limit, sort, search);
+    }
+
+    @Operation(summary = "Получить данные рекомендуемых постах")
+    @GetMapping("/get-recommended-posts-data")
+    public PageResponse<PostResponse> getRecommendedPostsData(){
+        return postService.findRecommendedPosts();
     }
 }
