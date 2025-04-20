@@ -30,10 +30,10 @@ public class ModeratorService extends UserService {
         Post post = postService.getPostById(post_id);
 
         switch (decision){
-            case "positive":
+            case "approved":
                 post.setStatus(PostStatus.STATUS_VERIFIED);
                 break;
-            case "negative":
+            case "rejected":
                 post.setStatus(PostStatus.STATUS_DENIED);
                 break;
             default:
