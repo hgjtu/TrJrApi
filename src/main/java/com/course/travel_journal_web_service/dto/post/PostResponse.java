@@ -1,6 +1,7 @@
 package com.course.travel_journal_web_service.dto.post;
 
 import com.course.travel_journal_web_service.models.Post;
+import com.course.travel_journal_web_service.models.PostStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -45,4 +46,7 @@ public class PostResponse {
 
     @Schema(description = "Признак того, что пост лайкнут запросившим пользователем", example = "true")
     private Boolean isLiked;
+
+    @Schema(description = "Статус проверки", example = "")
+    private PostStatus status;
 }

@@ -2,8 +2,6 @@ package com.course.travel_journal_web_service.models;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.core.io.Resource;
-
 import java.time.LocalDateTime;
 
 @Entity
@@ -46,4 +44,8 @@ public class Post {
 
     @Transient // Это поле не будет сохраняться в БД
     private String image;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private PostStatus status = PostStatus.STATUS_NOT_CHECKED;
 }

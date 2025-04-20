@@ -92,6 +92,7 @@ public class PostService {
                 .image(minioService.getFileAsBase64(newPost.getImageName()))
                 .likes(newPost.getLikes())
                 .isLiked(false)
+                .status(newPost.getStatus())
                 .build();
     }
 
@@ -141,6 +142,7 @@ public class PostService {
                 .likes(newPost.getLikes())
                 .isLiked(postLikeRepos.
                         existsByUserAndPost(currentUser,newPost))
+                .status(newPost.getStatus())
                 .build();
     }
 
@@ -179,6 +181,7 @@ public class PostService {
                 .image(minioService.getFileAsBase64(post.getImageName()))
                 .likes(post.getLikes())
                 .isLiked(isLiked)
+                .status(post.getStatus())
                 .build();
     }
 
@@ -277,6 +280,14 @@ public class PostService {
             spec = spec.and((root, query, cb) ->
                     cb.like(cb.lower(root.get("author").get("username")), "%" + author.toLowerCase() + "%"));
         }
+        else if(Objects.equals(sort, "moderator")){
+            spec = spec.and((root, query, cb) ->
+                    cb.like(root.get("status"), "%STATUS_NOT_CHECKED%"));
+        }
+        else{
+            spec = spec.and((root, query, cb) ->
+                    cb.notLike(root.get("status"), "%STATUS_DENIED%"));
+        }
 
         if (search != null && !search.isEmpty()) {
             Map<String, String> searchParams = Arrays.stream(search.split("&"))
@@ -370,6 +381,7 @@ public class PostService {
                         .image(minioService.getFileAsBase64(post.getImageName()))
                         .likes(post.getLikes())
                         .isLiked(post.getIsLiked())
+                        .status(post.getStatus())
                         .build())
                 .toList();
 
