@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/moderators")
 @RequiredArgsConstructor
-@Tag(name = "Модератторы")
+@Tag(name = "Модераторы")
 public class ModeratorController {
     private final ModeratorService service;
 

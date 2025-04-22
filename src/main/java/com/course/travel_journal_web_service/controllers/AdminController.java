@@ -16,9 +16,15 @@ import org.springframework.web.bind.annotation.*;
 public class AdminController {
     private final AdminService service;
 
-    @GetMapping("/get-admin")
-    @Operation(summary = "Получить роль ADMIN (для демонстрации)")
-    public void getAdmin() {
-        service.getAdmin();
+//    @GetMapping("/get-admin")
+//    @Operation(summary = "Получить роль ADMIN (для демонстрации)")
+//    public void getAdmin() {
+//        service.getAdmin();
+//    }
+
+    @GetMapping("/{username}/set-moderator")
+    @Operation(summary = "Выдать пользователю роль модератора")
+    public void setModerator(@PathVariable String username) {
+
     }
 }

@@ -36,15 +36,15 @@ public class ImageController {
 
     private final MinioService minioService;
 
-    @GetMapping("/{filename:.+}")
-    public ResponseEntity<Resource> getImage(@PathVariable String filename) throws Exception {
-        Resource resource = minioService.getFile(filename);
-        String contentType = minioService.getContentType(filename);
-
-        return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(contentType))
-                .header(HttpHeaders.CONTENT_DISPOSITION,
-                        "inline; filename=\"" + filename + "\"")
-                .body(resource);
-    }
+//    @GetMapping("/{filename:.+}")
+//    public ResponseEntity<Resource> getImage(@PathVariable String filename) throws Exception {
+//        Resource resource = minioService.getFile(filename);
+//        String contentType = minioService.getContentType(filename);
+//
+//        return ResponseEntity.ok()
+//                .contentType(MediaType.parseMediaType(contentType))
+//                .header(HttpHeaders.CONTENT_DISPOSITION,
+//                        "inline; filename=\"" + filename + "\"")
+//                .body(resource);
+//    }
 }
