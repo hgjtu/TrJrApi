@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.expression.ExpressionException;
 import org.springframework.stereotype.Service;
@@ -238,6 +239,25 @@ public class PostService {
     }
 
     /**
+     * Установка статуса после модерации
+     *
+     * @param post_id id поста для установки статуса
+     */
+    public void resubmitPost(Long post_id) {
+        // Получение поста
+        Post post = getPostById(post_id);
+        User currentUser = userService.getCurrentUser();
+
+        // Проверяем, что пользователь переотправляет свой пост
+        if(!(Objects.equals(post.getAuthor().getUsername(), currentUser.getUsername())
+                || currentUser.getRole() == Role.ROLE_ADMIN)){
+            throw new ExpressionException("Нельзя переотправить не свой пост");
+        }
+
+        post.setStatus(PostStatus.STATUS_NOT_CHECKED);
+    }
+
+    /**
      * Сброс фото поста до базовой картинки
      *
      */
@@ -267,12 +287,6 @@ public class PostService {
      * @return посты по запросу
      */
     public PageResponse<PostResponse> findAllPosts(Integer page, Integer limit, String sort, String search) {
-//        Page<Post> postPage = switch (sort) {
-//            case "subscriptions" -> repository.findAll(PageRequest.of(page, limit, PostSort.LIKES_DESC.getSortValue()));
-//            case "my-posts" -> repository.findAll(PageRequest.of(page, limit, PostSort.LIKES_ASC.getSortValue()));
-//            default -> repository.findAll(PageRequest.of(page, limit, PostSort.DATE_DESC.getSortValue()));
-//        };
-
         Specification<Post> spec = Specification.where(null);
 
         if(Objects.equals(sort, "my-posts")){
@@ -347,12 +361,14 @@ public class PostService {
                     });
                 } catch (DateTimeParseException e) {
                     // Логируем ошибку, но не прерываем выполнение
-//                    logger.error("Error parsing date filter parameters", e);
+//                logger.error("Error parsing date filter parameters", e);
                 }
             }
         }
 
-        Page<Post> postPage = repository.findAll(spec, PageRequest.of(page, limit, PostSort.DATE_DESC.getSortValue()));
+        Page<Post> postPage = repository.findAll(spec, PageRequest.of(page, limit,
+                PostSort.STATUS_ASC.getSortValue()
+                        .and(PostSort.DATE_DESC.getSortValue())));
 
         return getPageResponseFromPostPage(postPage);
     }
@@ -363,7 +379,12 @@ public class PostService {
      * @return самые попоулярныек посты
      */
     public PageResponse<PostResponse> findRecommendedPosts() {
-        Page<Post> postPage = repository.findAll(PageRequest.of(0, 5, PostSort.LIKES_DESC.getSortValue()));
+        Specification<Post> spec = Specification.where(null);
+
+        spec = spec.and((root, query, cb) ->
+                cb.notLike(root.get("status"), "%STATUS_DENIED%"));
+
+        Page<Post> postPage = repository.findAll(spec, PageRequest.of(0, 5, PostSort.LIKES_DESC.getSortValue()));
 
         return getPageResponseFromPostPage(postPage);
     }

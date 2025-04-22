@@ -59,6 +59,13 @@ public class PostController {
         return ResponseEntity.ok(postService.likePost(post_id));
     }
 
+    @Operation(summary = "Повторно опубликовать пост")
+    @PutMapping("/resubmit/{post_id}")
+    public ResponseEntity<?> resubmitPost(@PathVariable Long post_id) {
+        postService.resubmitPost(post_id);
+        return ResponseEntity.ok("");
+    }
+
     @Operation(summary = "Получить данные о всех постах (пагинация)")
     @GetMapping("/get-posts-data")
     public PageResponse<PostResponse> getPostsData(@RequestParam(value = "page", defaultValue = "0") @Min(0) Integer page,
