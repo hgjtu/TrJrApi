@@ -3,6 +3,7 @@ package com.course.travel_journal_web_service.models;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Builder
@@ -44,6 +45,12 @@ public class Post {
 
     @Transient // Это поле не будет сохраняться в БД
     private String image;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "user_post_likes",
+            joinColumns = @JoinColumn(name = "post_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id"))
+    private List<User> likedUsers;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

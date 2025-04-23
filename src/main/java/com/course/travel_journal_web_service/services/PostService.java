@@ -3,7 +3,6 @@ package com.course.travel_journal_web_service.services;
 import com.course.travel_journal_web_service.dto.post.PostRequest;
 import com.course.travel_journal_web_service.dto.post.PostResponse;
 import com.course.travel_journal_web_service.models.*;
-import com.course.travel_journal_web_service.repos.PostLikeRepos;
 import com.course.travel_journal_web_service.repos.PostRepos;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.transaction.Transactional;
@@ -12,7 +11,6 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.expression.ExpressionException;
 import org.springframework.stereotype.Service;
@@ -33,7 +31,6 @@ public class PostService {
 //    private final String serviceName = "Posts";
 
     private final PostRepos repository;
-    private final PostLikeRepos postLikeRepos;
     private final UserService userService;
 
     @Autowired
@@ -141,8 +138,7 @@ public class PostService {
                 .description(newPost.getDescription())
                 .image(minioService.getFileAsBase64(newPost.getImageName()))
                 .likes(newPost.getLikes())
-                .isLiked(postLikeRepos.
-                        existsByUserAndPost(currentUser,newPost))
+                .isLiked(userService.isLikedPost(newPost))
                 .status(newPost.getStatus())
                 .build();
     }
@@ -160,9 +156,7 @@ public class PostService {
         boolean isLiked = false;
 
         try{
-            User currentUser = userService.getCurrentUser();
-            isLiked = postLikeRepos
-                    .existsByUserAndPost(currentUser, post);
+            isLiked = userService.isLikedPost(post);
         }
         catch (Exception ignored){  }
 
@@ -202,9 +196,6 @@ public class PostService {
             throw new ExpressionException("Нельзя удалить не свой пост");
         }
 
-        // Удаляем все записи о лайках этого поста
-        postLikeRepos.deleteAllByPost(post);
-
         repository.delete(post);
     }
 
@@ -215,26 +206,17 @@ public class PostService {
      */
     public Long likePost(Long post_id) {
         Post post = getPostById(post_id);
-        PostLike postLike = new PostLike();
 
-        if (postLikeRepos.existsByUserAndPost(
-                userService.getCurrentUser(),
-                getPostById(post_id))) {
-
+        if (userService.isLikedPost(post)) {
             post.setLikes(post.getLikes() - 1);
-
-            postLike = postLikeRepos.findByUserAndPost(userService.getCurrentUser(), post)
-                    .orElseThrow(() -> new ExpressionException("Ошибка при попытке лайка"));
-            postLikeRepos.delete(postLike);
+            userService.deleteLike(post);
         }
         else {
             post.setLikes(post.getLikes() + 1);
-
-            postLike.setPost(getPostById(post_id));
-            postLike.setUser(userService.getCurrentUser());
-            postLikeRepos.save(postLike);
+            userService.addLike(post);
         }
 
+        save(post);
         return post.getLikes();
     }
 
@@ -366,9 +348,18 @@ public class PostService {
             }
         }
 
-        Page<Post> postPage = repository.findAll(spec, PageRequest.of(page, limit,
-                PostSort.STATUS_ASC.getSortValue()
-                        .and(PostSort.DATE_DESC.getSortValue())));
+        Page<Post> postPage;
+
+        if(Objects.equals(sort, "my-posts")) {
+            postPage = repository.findAll(spec, PageRequest.of(page, limit,
+                    PostSort.STATUS_ASC.getSortValue()
+                            .and(PostSort.DATE_DESC.getSortValue())));
+        }
+        else{
+            postPage = repository.findAll(spec, PageRequest.of(page, limit,
+                    PostSort.STATUS_DESC.getSortValue()
+                            .and(PostSort.DATE_DESC.getSortValue())));
+        }
 
         return getPageResponseFromPostPage(postPage);
     }
@@ -416,5 +407,4 @@ public class PostService {
                 postPage.isLast()
         );
     }
-
 }

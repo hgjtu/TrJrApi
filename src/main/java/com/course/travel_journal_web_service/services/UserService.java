@@ -4,6 +4,7 @@ import com.course.travel_journal_web_service.dto.user.ChangePasswordRequest;
 import com.course.travel_journal_web_service.dto.user.UserEditRequest;
 import com.course.travel_journal_web_service.dto.user.UserResponse;
 import com.course.travel_journal_web_service.dto.user.UserMinResponse;
+import com.course.travel_journal_web_service.models.Post;
 import com.course.travel_journal_web_service.models.Role;
 import com.course.travel_journal_web_service.models.User;
 import com.course.travel_journal_web_service.models.UserForResponse;
@@ -192,5 +193,43 @@ public class UserService {
         // Получение имени пользователя из контекста Spring Security
         var username = SecurityContextHolder.getContext().getAuthentication().getName();
         return getByUsername(username);
+    }
+
+    /**
+     * Получение признака, что пользователь лайкнул какой-то пост
+     *
+     * @param post id поста для проверки
+     * @return boolean
+     */
+    public boolean isLikedPost(Post post) {
+        return getCurrentUser().getLikedPosts().contains(post);
+    }
+
+    /**
+     * Удалить упоминание пользователя из лайкнувших
+     *
+     * @param post пост
+     */
+    public void addLike(Post post) {
+        User currentUser = getCurrentUser();
+
+        post.getLikedUsers().add(currentUser);
+        currentUser.getLikedPosts().add(post);
+
+        save(currentUser);
+    }
+
+    /**
+     * Удалить упоминание пользователя из лайкнувших
+     *
+     * @param post пост
+     */
+    public void deleteLike(Post post) {
+        User currentUser = getCurrentUser();
+
+        post.getLikedUsers().remove(currentUser);
+        currentUser.getLikedPosts().remove(post);
+
+        save(currentUser);
     }
 }

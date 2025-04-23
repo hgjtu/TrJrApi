@@ -35,8 +35,7 @@ public class PostController {
     @Operation(summary = "Получение информации о посте")
     @GetMapping("/get-post-data/{post_id}")
     public PostResponse getPostData(@PathVariable Long post_id) {
-        PostResponse postData = postService.getPostData(post_id);
-        return postData;
+        return postService.getPostData(post_id);
     }
 
     @Operation(summary = "Изменение информации в посте")
