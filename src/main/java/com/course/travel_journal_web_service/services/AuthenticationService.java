@@ -3,11 +3,13 @@ package com.course.travel_journal_web_service.services;
 import com.course.travel_journal_web_service.dto.auth.JwtAuthenticationResponse;
 import com.course.travel_journal_web_service.dto.auth.SignInRequest;
 import com.course.travel_journal_web_service.dto.auth.SignUpRequest;
+import com.course.travel_journal_web_service.dto.user.ChangePasswordRequest;
 import com.course.travel_journal_web_service.models.Role;
 import com.course.travel_journal_web_service.models.User;
 import com.course.travel_journal_web_service.models.UserForResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -72,5 +74,31 @@ public class AuthenticationService {
                 .build();
 
         return new JwtAuthenticationResponse(jwt, userForResponse);
+    }
+
+    /**
+     * Изменение пароля пользователя
+     *
+     * @param request Запрос на изменение пароля
+     * @throws BadCredentialsException если старый пароль неверный
+     * @throws IllegalArgumentException если новый пароль совпадает со старым или не соответствует требованиям
+     */
+    public void changePassword(ChangePasswordRequest request) {
+        User currentUser = userService.getCurrentUser();
+
+        if (!passwordEncoder.matches(request.getOldPassword(), currentUser.getPassword())) {
+            throw new BadCredentialsException("Неверный старый пароль");
+        }
+
+        if (passwordEncoder.matches(request.getNewPassword(), currentUser.getPassword())) {
+            throw new IllegalArgumentException("Новый пароль не может совпадать со старым");
+        }
+
+        if (request.getNewPassword().length() < 4) { //!!!!!!!!!!!!!!!!!!!!!!
+            throw new IllegalArgumentException("Пароль должен содержать минимум 8 символов");
+        }
+
+        currentUser.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userService.save(currentUser);
     }
 }

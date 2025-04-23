@@ -15,7 +15,7 @@ public class ModeratorController {
     private final ModeratorService service;
 
     @PostMapping("/{post_id}/decision/{decision}")
-    @Operation(summary = "Положительное решение модератора по посту")
+    @Operation(summary = "Решение модератора по посту")
     public void positiveDecision(@PathVariable Long post_id, @PathVariable String decision) {
         service.setDecision(post_id, decision);
     }

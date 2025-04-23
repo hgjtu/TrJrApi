@@ -3,6 +3,7 @@ package com.course.travel_journal_web_service.services;
 
 import com.course.travel_journal_web_service.models.Role;
 import com.course.travel_journal_web_service.repos.UserRepos;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service

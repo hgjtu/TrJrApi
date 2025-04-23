@@ -7,6 +7,7 @@ import com.course.travel_journal_web_service.models.User;
 import com.course.travel_journal_web_service.repos.UserRepos;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service

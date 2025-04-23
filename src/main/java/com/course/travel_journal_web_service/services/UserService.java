@@ -1,5 +1,6 @@
 package com.course.travel_journal_web_service.services;
 
+import com.course.travel_journal_web_service.dto.user.ChangePasswordRequest;
 import com.course.travel_journal_web_service.dto.user.UserEditRequest;
 import com.course.travel_journal_web_service.dto.user.UserResponse;
 import com.course.travel_journal_web_service.dto.user.UserMinResponse;
@@ -14,6 +15,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,7 +25,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class UserService {
 //    private final String serviceName = "Users";
     private final UserRepos repository;
-
     private final MinioService minioService;
 
     /**
