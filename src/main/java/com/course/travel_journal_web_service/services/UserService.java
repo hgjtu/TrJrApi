@@ -84,9 +84,9 @@ public class UserService {
             // Сохраняем обновленного пользователя
             User updatedUser = save(currentUser);
 
-            if (!minioService.fileExists(updatedUser.getImageName())) {
-                resetUserImage();
-            }
+//            if (!minioService.fileExists(updatedUser.getImageName())) {
+//                resetUserImage();
+//            }
 
             // Возвращаем обновленные данные пользователя
             return UserResponse.builder()
@@ -120,9 +120,9 @@ public class UserService {
         // Получение пользователя
         User user = getCurrentUser();
 
-        if (!minioService.fileExists(user.getImageName())) {
-            resetUserImage();
-        }
+//        if (!minioService.fileExists(user.getImageName())) {
+//            resetUserImage();
+//        }
 
         try {
             return UserResponse.builder()
@@ -146,10 +146,9 @@ public class UserService {
         User user = getCurrentUser();
 
         try{
-            if (!minioService.fileExists(user.getImageName())) {
-                resetUserImage();
-            }
-
+//            if (!minioService.fileExists(user.getImageName())) {
+//                resetUserImage();
+//            }
             return UserForResponse.builder()
                     .username(user.getUsername())
                     .image(minioService.getFileAsBase64(user.getImageName()))

@@ -5,6 +5,9 @@ import io.minio.errors.ErrorResponseException;
 import org.apache.commons.compress.utils.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.actuate.health.Health;
+import org.springframework.boot.actuate.health.HealthIndicator;
+import org.springframework.boot.actuate.health.Status;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,7 +18,7 @@ import java.util.Base64;
 import java.util.UUID;
 
 @Service
-public class MinioService {
+public class MinioService implements HealthIndicator {
 
     @Autowired
     private MinioClient minioClient;
@@ -60,17 +63,21 @@ public class MinioService {
 
     public String getFileAsBase64(String filename) {
         try {
-            String contentType = getContentType(filename);
+            if(fileExists(filename)){
+                String contentType = getContentType(filename);
 
-            InputStream inputStream = minioClient.getObject(
-                    GetObjectArgs.builder()
-                            .bucket(bucketName)
-                            .object(filename)
-                            .build());
+                InputStream inputStream = minioClient.getObject(
+                        GetObjectArgs.builder()
+                                .bucket(bucketName)
+                                .object(filename)
+                                .build());
 
-            byte[] bytes = IOUtils.toByteArray(inputStream);
-            return "data:" + contentType + ";base64,"
-                    + Base64.getEncoder().encodeToString(bytes);
+                byte[] bytes = IOUtils.toByteArray(inputStream);
+                return "data:" + contentType + ";base64,"
+                        + Base64.getEncoder().encodeToString(bytes);
+            }
+            else return "";
+
         } catch (Exception e) {
             throw new RuntimeException("Error converting file to Base64", e);
         }
@@ -96,13 +103,16 @@ public class MinioService {
 
     public boolean fileExists(String filename) {
         try {
-            minioClient.statObject(
-                    StatObjectArgs.builder()
-                            .bucket(bucketName)
-                            .object(filename)
-                            .build()
-            );
-            return true;
+            if(health().getStatus().equals(Status.UP)) {
+                minioClient.statObject(
+                        StatObjectArgs.builder()
+                                .bucket(bucketName)
+                                .object(filename)
+                                .build()
+                );
+                return true;
+            }
+            else return false;
         }
         catch (Exception e) {
             if (e instanceof ErrorResponseException errorResponse
@@ -119,5 +129,16 @@ public class MinioService {
 
     private String generateFileName(String originalFileName) {
         return UUID.randomUUID().toString() + "-" + originalFileName;
+    }
+
+    @Override
+    public Health health() {
+        try {
+            // Простая проверка - список bucket'ов
+            minioClient.listBuckets();
+            return Health.up().withDetail("message", "MinIO is available").build();
+        } catch (Exception e) {
+            return Health.down().withDetail("error", e.getMessage()).build();
+        }
     }
 }

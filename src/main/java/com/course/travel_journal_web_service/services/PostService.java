@@ -76,9 +76,9 @@ public class PostService {
 
         save(newPost);
 
-        if (!minioService.fileExists(newPost.getImageName())) {
-            resetPostImage(newPost.getId());
-        }
+//        if (!minioService.fileExists(newPost.getImageName())) {
+//            resetPostImage(newPost.getId());
+//        }
 
         return PostResponse.builder()
                 .id(newPost.getId())
@@ -124,9 +124,9 @@ public class PostService {
         // Сохраняем обновленный пост
         Post newPost = save(post);
 
-        if (!minioService.fileExists(newPost.getImageName())) {
-            resetPostImage(newPost.getId());
-        }
+//        if (!minioService.fileExists(newPost.getImageName())) {
+//            resetPostImage(newPost.getId());
+//        }
 
         // Возвращаем обновленные данные о посте
         return PostResponse.builder()
@@ -160,9 +160,9 @@ public class PostService {
         }
         catch (Exception ignored){  }
 
-        if (!minioService.fileExists(post.getImageName())) {
-            resetPostImage(post.getId());
-        }
+//        if (!minioService.fileExists(post.getImageName())) {
+//            resetPostImage(post.getId());
+//        }
 
         return PostResponse.builder()
                 .id(post.getId())
