@@ -22,9 +22,9 @@ public class AdminController {
 //        service.getAdmin();
 //    }
 
-    @GetMapping("/{username}/set-moderator")
+    @GetMapping("/{username:.+}/set-moderator")
     @Operation(summary = "Выдать пользователю роль модератора")
-    public void setModerator(@PathVariable String username) {
-
+    public ResponseEntity<?> setModerator(@PathVariable String username) {
+        return ResponseEntity.ok("");
     }
 }
