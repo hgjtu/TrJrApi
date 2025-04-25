@@ -1,5 +1,6 @@
 package com.course.travel_journal_web_service.services;
 
+import com.course.travel_journal_web_service.CustomExceptions.ResourceNotFoundException;
 import com.course.travel_journal_web_service.dto.post.PostRequest;
 import com.course.travel_journal_web_service.dto.post.PostResponse;
 import com.course.travel_journal_web_service.models.*;
@@ -256,7 +257,7 @@ public class PostService {
      */
     public Post getPostById(Long post_id) {
         return repository.findById(post_id)
-                .orElseThrow(() -> new ExpressionException("Пост не найден"));
+                .orElseThrow(() -> new ResourceNotFoundException("Пост не найден"));
 
     }
 

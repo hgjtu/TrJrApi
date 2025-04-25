@@ -1,5 +1,6 @@
 package com.course.travel_journal_web_service.services;
 
+import com.course.travel_journal_web_service.CustomExceptions.ResourceNotFoundException;
 import com.course.travel_journal_web_service.dto.user.ChangePasswordRequest;
 import com.course.travel_journal_web_service.dto.user.UserEditRequest;
 import com.course.travel_journal_web_service.dto.user.UserResponse;
@@ -168,7 +169,7 @@ public class UserService {
      */
     public User getByUsername(String username) {
         return repository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден"));
+                .orElseThrow(() -> new ResourceNotFoundException("Пользователь не найден"));
 
     }
 

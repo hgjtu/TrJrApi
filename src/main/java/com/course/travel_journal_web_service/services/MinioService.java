@@ -1,5 +1,6 @@
 package com.course.travel_journal_web_service.services;
 
+import com.course.travel_journal_web_service.CustomExceptions.StorageUnavailableException;
 import io.minio.*;
 import io.minio.errors.ErrorResponseException;
 import org.apache.commons.compress.utils.IOUtils;
@@ -12,6 +13,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.InputStream;
 import java.util.Base64;
@@ -32,19 +34,25 @@ public class MinioService implements HealthIndicator {
     public String uploadFile(MultipartFile file) throws Exception {
         String fileName = generateFileName(file.getOriginalFilename());
 
-        try (InputStream inputStream = file.getInputStream()) {
-            minioClient.putObject(
-                    PutObjectArgs.builder()
-                            .bucket(bucketName)
-                            .object(fileName)
-                            .stream(inputStream, file.getSize(), -1)
-                            .contentType(file.getContentType())
-                            .build());
-            return fileName;
+        if(health().getStatus().equals(Status.UP)){
+            try (InputStream inputStream = file.getInputStream()) {
+                minioClient.putObject(
+                        PutObjectArgs.builder()
+                                .bucket(bucketName)
+                                .object(fileName)
+                                .stream(inputStream, file.getSize(), -1)
+                                .contentType(file.getContentType())
+                                .build());
+                return fileName;
+            }
+            catch (Exception e) {
+                throw new RuntimeException("Ошибка загрузки файла в MinIO", e);
+            }
         }
-        catch (Exception e) {
-            throw new RuntimeException("Ошибка загрузки файла в MinIO", e);
+        else {
+            throw new StorageUnavailableException("Файловое хранилище недоступно недоступно");
         }
+
     }
 
     public Resource getFile(String filename) {

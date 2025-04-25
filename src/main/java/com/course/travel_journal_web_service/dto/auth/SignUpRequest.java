@@ -1,16 +1,16 @@
 package com.course.travel_journal_web_service.dto.auth;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.NoArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 
-@AllArgsConstructor
-@NoArgsConstructor
 @Data
+@Validated
 @Schema(description = "Запрос на регистрацию")
 public class SignUpRequest {
 
@@ -26,6 +26,7 @@ public class SignUpRequest {
     private String email;
 
     @Schema(description = "Пароль", example = "my_1secret1_password")
-    @Size(max = 255, message = "Длина пароля должна быть не более 255 символов")
+    @Size(min = 8, max = 50, message = "Длина пароля должна быть от 8 до 50 символов")
+    @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,50}$", message = "Пароль должен содержать хотя бы одну: заглавную букву, строчную букву, цифру")
     private String password;
 }

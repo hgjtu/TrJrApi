@@ -94,10 +94,6 @@ public class AuthenticationService {
             throw new IllegalArgumentException("Новый пароль не может совпадать со старым");
         }
 
-        if (request.getNewPassword().length() < 4) { //!!!!!!!!!!!!!!!!!!!!!!
-            throw new IllegalArgumentException("Пароль должен содержать минимум 8 символов");
-        }
-
         currentUser.setPassword(passwordEncoder.encode(request.getNewPassword()));
         userService.save(currentUser);
     }
