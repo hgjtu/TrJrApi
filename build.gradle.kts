@@ -1,6 +1,5 @@
 plugins {
 	java
-	war
 	id("org.springframework.boot") version "3.4.3"
 	id("io.spring.dependency-management") version "1.1.7"
 }
@@ -38,11 +37,9 @@ dependencies {
 	implementation("me.paulschwarz:spring-dotenv:4.0.0")
 	implementation("org.springframework.boot:spring-boot-maven-plugin:3.4.5")
 	compileOnly("org.projectlombok:lombok")
-	compileOnly("org.apache.tomcat:tomcat-servlet-api:9.0.37")
 	compileOnly("io.swagger.core.v3:swagger-annotations:2.2.25")
 	runtimeOnly("org.postgresql:postgresql")
 	annotationProcessor("org.projectlombok:lombok")
-	providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.security:spring-security-test")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
