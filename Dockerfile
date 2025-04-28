@@ -10,7 +10,7 @@ FROM eclipse-temurin:17-jre-jammy
 
 WORKDIR /app
 
-COPY --from=builder /app/build/libs/*.jar app.jar
+COPY --from=builder /app/build/libs/app.jar app.jar
 
 EXPOSE 8010
 
