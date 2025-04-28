@@ -35,6 +35,7 @@ dependencies {
 	implementation("io.minio:minio:8.5.7")
 	implementation("org.springframework.boot:spring-boot-starter-actuator")
 	implementation("org.springframework.boot:spring-boot-starter-validation:3.4.4")
+	implementation("me.paulschwarz:spring-dotenv:4.0.0")
 	compileOnly("org.projectlombok:lombok")
 	compileOnly("org.apache.tomcat:tomcat-servlet-api:9.0.37")
 	compileOnly("io.swagger.core.v3:swagger-annotations:2.2.25")
