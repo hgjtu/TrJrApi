@@ -8,6 +8,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -101,6 +102,23 @@ public class GlobalExceptionHandler {
         result.put("errors", errors);
 
         return new ResponseEntity<>(result, HttpStatus.SERVICE_UNAVAILABLE);
+    }
+
+    @ExceptionHandler(InternalAuthenticationServiceException.class)
+    public ResponseEntity<Object> handleInternalAuthenticationService(InternalAuthenticationServiceException ex) {
+        String apiError = ex.getMessage();
+
+        List<String> errors = new ArrayList<>();
+//        String errorMessage = "";
+//        if (ex.getCause() != null && ex.getCause().getMessage() != null) {
+//            errorMessage += ": " + ex.getCause().getMessage();
+//        }
+        errors.add(apiError);
+
+        Map<String, List<String>> result = new HashMap<>();
+        result.put("errors", errors);
+
+        return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
