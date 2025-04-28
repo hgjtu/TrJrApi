@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY . .
 
-RUN ./gradlew clean package -DskipTests
+RUN ./mvnw clean package -DskipTests
 
 FROM eclipse-temurin:17-jre-jammy
 
