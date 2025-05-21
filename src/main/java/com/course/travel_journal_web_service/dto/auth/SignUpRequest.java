@@ -27,6 +27,6 @@ public class SignUpRequest {
 
     @Schema(description = "Пароль", example = "my_1secret1_password")
     @Size(min = 8, max = 50, message = "Длина пароля должна быть от 8 до 50 символов")
-    @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,50}$", message = "Пароль должен содержать хотя бы одну: заглавную букву, строчную букву, цифру")
+    @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,50}$", message = "Пароль должен содержать хотя бы одну: строчную букву, цифру")
     private String password;
 }

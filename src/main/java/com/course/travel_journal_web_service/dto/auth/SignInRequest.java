@@ -22,6 +22,6 @@ public class SignInRequest {
     @Schema(description = "Пароль", example = "my_1secret1_password")
     @Size(min = 4, max = 50, message = "Длина пароля должна быть от 8 до 255 символов")
     @NotBlank(message = "Пароль не может быть пустыми")
-//    @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,50}$")
+    @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,50}$", message = "Пароль должен содержать хотя бы одну: строчную букву, цифру")
     private String password;
 }

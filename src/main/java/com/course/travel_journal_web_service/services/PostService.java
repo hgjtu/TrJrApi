@@ -14,7 +14,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.expression.ExpressionException;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+//import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.UnsupportedEncodingException;
@@ -156,10 +160,14 @@ public class PostService {
 
         boolean isLiked = false;
 
-        try{
-            isLiked = userService.isLikedPost(post);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication != null && authentication.isAuthenticated()
+                && !(authentication instanceof AnonymousAuthenticationToken)) {
+            try {
+                isLiked = userService.isLikedPost(post);
+            } catch (Exception ignored) { }
         }
-        catch (Exception ignored){  }
 
 //        if (!minioService.fileExists(post.getImageName())) {
 //            resetPostImage(post.getId());
